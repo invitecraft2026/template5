@@ -56,11 +56,10 @@ function getTimeLeft(targetDate: string) {
 }
 
 const numberClass =
-  "text-xl font-normal tracking-wide text-[#fff8ef] drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] sm:text-4xl";
+  "text-3xl font-normal tracking-wide text-[#fff8ef] drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] sm:text-5xl";
 
 const labelClass =
-  "mt-1 text-[0.5rem] font-semibold uppercase tracking-[0.15em] text-[#e8cf9a] drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] sm:mt-2 sm:text-xs sm:tracking-[0.25em]";
-
+  "mt-1 text-[0.62rem] font-semibold uppercase tracking-[0.15em] text-[#e8cf9a] drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] sm:mt-2 sm:text-sm sm:tracking-[0.25em]";
 export function SaveTheDate() {
   const [timeLeft, setTimeLeft] = useState(() =>
     getTimeLeft(wedding.dateISO)
