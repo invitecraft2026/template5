@@ -1,16 +1,23 @@
-
 import { motion } from "framer-motion";
 import { wedding } from "@/config/wedding";
 
 import floralBackground from "@/assets/last_frame_from_Burgundy_velvet.png";
 
 export function HeroSection({ start }: { start: boolean }) {
+  // Fades the last 56px of the background into the page, so the hero has no hard bottom edge
+  const fadeBottom =
+    "linear-gradient(to bottom, #000 calc(100% - 56px), transparent 100%)";
+
   return (
-    <section className="relative min-h-[100svh] w-full overflow-hidden bg-white">
-      {/* Floral background image */}
+    <section className="relative min-h-[100svh] w-full overflow-hidden bg-transparent">
+      {/* Floral background: white base + image, bottom edge faded out */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0"
+        className="pointer-events-none absolute inset-0 z-0 bg-white"
+        style={{
+          WebkitMaskImage: fadeBottom,
+          maskImage: fadeBottom,
+        }}
       >
         <img
           src={floralBackground}
