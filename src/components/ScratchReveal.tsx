@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import {
   useCallback,
@@ -40,6 +41,7 @@ function ScratchBox({
 
       const { width, height } = canvas;
 
+      // Deep burgundy scratch coating
       const gradient = ctx.createLinearGradient(
         0,
         0,
@@ -47,36 +49,38 @@ function ScratchBox({
         height
       );
 
-      /*
-       * Richer antique-gold coating so the scratch
-       * boxes stand out clearly on the cream background.
-       */
-      gradient.addColorStop(0, "#D9BE86");
-      gradient.addColorStop(0.45, "#B8934A");
-      gradient.addColorStop(1, "#D4B97C");
+      gradient.addColorStop(0, "#74303D");
+      gradient.addColorStop(0.45, "#4D1F29");
+      gradient.addColorStop(1, "#652633");
 
       ctx.globalCompositeOperation = "source-over";
-
       ctx.fillStyle = gradient;
-
       ctx.fillRect(0, 0, width, height);
 
-      /*
-       * Subtle diagonal texture
-       */
-      ctx.strokeStyle = "rgba(255,248,230,0.35)";
-
+      // Subtle diagonal texture
+      ctx.strokeStyle = "rgba(255,235,225,0.12)";
       ctx.lineWidth = 1;
 
       for (let i = -height; i < width; i += 10) {
         ctx.beginPath();
-
         ctx.moveTo(i, 0);
-
         ctx.lineTo(i + height, height);
-
         ctx.stroke();
       }
+
+      // Fine antique-gold circular border
+      ctx.strokeStyle = "rgba(212,185,124,0.9)";
+      ctx.lineWidth = Math.max(1, width * 0.008);
+
+      ctx.beginPath();
+      ctx.arc(
+        width / 2,
+        height / 2,
+        Math.min(width, height) * 0.46,
+        0,
+        Math.PI * 2
+      );
+      ctx.stroke();
     },
     []
   );
@@ -87,32 +91,38 @@ function ScratchBox({
 
     if (!canvas || !wrap) return;
 
-    const dpr = Math.min(
-      window.devicePixelRatio || 1,
-      2
-    );
+    const setupCanvas = () => {
+      const dpr = Math.min(
+        window.devicePixelRatio || 1,
+        2
+      );
 
-    const rect = wrap.getBoundingClientRect();
+      const rect = wrap.getBoundingClientRect();
 
-    canvas.width = Math.round(rect.width * dpr);
+      if (!rect.width || !rect.height) return;
 
-    canvas.height = Math.round(rect.height * dpr);
+      canvas.width = Math.round(rect.width * dpr);
+      canvas.height = Math.round(rect.height * dpr);
 
-    canvas.style.width = `${rect.width}px`;
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
 
-    canvas.style.height = `${rect.height}px`;
+      paintCoating(canvas);
+    };
 
-    paintCoating(canvas);
+    setupCanvas();
+
+    const observer = new ResizeObserver(setupCanvas);
+    observer.observe(wrap);
+
+    return () => observer.disconnect();
   }, [paintCoating]);
 
   const scratchedRatio = () => {
     const canvas = canvasRef.current;
-
     const ctx = canvas?.getContext("2d");
 
-    if (!canvas || !ctx) {
-      return 0;
-    }
+    if (!canvas || !ctx) return 0;
 
     const step = 8;
 
@@ -127,10 +137,10 @@ function ScratchBox({
     let total = 0;
 
     for (let i = 3; i < data.length; i += 4 * step) {
-      total += 1;
+      total++;
 
       if (data[i] === 0) {
-        clear += 1;
+        clear++;
       }
     }
 
@@ -141,58 +151,44 @@ function ScratchBox({
     e: React.PointerEvent<HTMLCanvasElement>
   ) => {
     const canvas = canvasRef.current;
-
     const ctx = canvas?.getContext("2d");
 
-    if (!canvas || !ctx) {
-      return;
-    }
+    if (!canvas || !ctx) return;
 
     const rect = canvas.getBoundingClientRect();
-
     const dpr = canvas.width / rect.width;
 
     const x = (e.clientX - rect.left) * dpr;
-
     const y = (e.clientY - rect.top) * dpr;
 
     const radius =
       (window.innerWidth < 420 ? 18 : 22) * dpr;
 
     ctx.globalCompositeOperation = "destination-out";
-
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
-
     ctx.lineWidth = radius * 2;
 
     if (last.current) {
       ctx.beginPath();
-
       ctx.moveTo(last.current.x, last.current.y);
-
       ctx.lineTo(x, y);
-
       ctx.stroke();
     }
 
     ctx.beginPath();
-
     ctx.arc(x, y, radius, 0, Math.PI * 2);
-
     ctx.fill();
 
-    last.current = {
-      x,
-      y,
-    };
+    last.current = { x, y };
   };
 
   const onDown = (
     e: React.PointerEvent<HTMLCanvasElement>
   ) => {
-    drawing.current = true;
+    if (revealed) return;
 
+    drawing.current = true;
     last.current = null;
 
     e.currentTarget.setPointerCapture(e.pointerId);
@@ -203,16 +199,15 @@ function ScratchBox({
   const onMove = (
     e: React.PointerEvent<HTMLCanvasElement>
   ) => {
-    if (!drawing.current) {
-      return;
-    }
+    if (!drawing.current || revealed) return;
 
     erase(e);
   };
 
   const onUp = () => {
-    drawing.current = false;
+    if (!drawing.current) return;
 
+    drawing.current = false;
     last.current = null;
 
     if (!revealed && scratchedRatio() >= THRESHOLD) {
@@ -221,7 +216,8 @@ function ScratchBox({
   };
 
   return (
-    <div className="flex flex-col items-center gap-2">
+    <div className="flex flex-col items-center gap-3">
+      {/* Circular scratch card */}
       <div
         ref={wrapRef}
         className="
@@ -229,9 +225,10 @@ function ScratchBox({
           aspect-square
           w-full
           overflow-hidden
-          rounded-2xl
+          rounded-full
           border
-          border-[#b8934a]/70
+          border-[#b8934a]
+          bg-[#fffaf0]
           shadow-[0_8px_25px_rgba(77,31,41,0.18)]
           select-none
         "
@@ -244,26 +241,27 @@ function ScratchBox({
             flex
             items-center
             justify-center
+            rounded-full
             bg-[#fffaf0]
             px-2
             text-center
           "
         >
-          {/* Deep burgundy so the date is easy to read */}
           <p
             className="
               font-script
-              text-2xl
+              text-xl
               font-medium
+              leading-tight
               text-[#4d1f29]
-              sm:text-3xl
+              sm:text-2xl
             "
           >
             {value}
           </p>
         </div>
 
-        {/* Scratch coating */}
+        {/* Burgundy scratch coating */}
         <motion.canvas
           ref={canvasRef}
           onPointerDown={onDown}
@@ -282,7 +280,7 @@ function ScratchBox({
             absolute
             inset-0
             touch-none
-            rounded-2xl
+            rounded-full
           "
           style={{
             pointerEvents: revealed ? "none" : "auto",
@@ -290,15 +288,15 @@ function ScratchBox({
         />
       </div>
 
-      {/* Label - dark olive */}
+      {/* Label */}
       <p
         className="
           text-[0.6rem]
           font-semibold
           uppercase
-          tracking-[0.25em]
-          text-[#3f4a2c]
-          drop-shadow-[0_0_8px_rgba(251,245,230,0.9)]
+          tracking-[0.2em]
+          text-[#4d1f29]
+          sm:text-xs
         "
       >
         {label}
@@ -337,16 +335,14 @@ export function ScratchReveal() {
         </Reveal>
 
         <Reveal delay={0.08}>
-          {/* Antique gold hint text */}
           <p
             className="
               mt-3
               text-[0.65rem]
               font-medium
               uppercase
-              tracking-[0.25em]
-              text-[#7a5a14]
-              drop-shadow-[0_0_8px_rgba(251,245,230,0.9)]
+              tracking-[0.2em]
+              text-[#4d1f29]
             "
           >
             ✦ Scratch to reveal the date ✦

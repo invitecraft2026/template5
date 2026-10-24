@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { wedding } from "@/config/wedding";
+import countdownBg from "@/assets/countdown-bg-landscape.jpg";
 
 import { Reveal } from "./Reveal";
 import { CornerFrame, SectionHeading } from "./Ornament";
@@ -55,10 +56,10 @@ function getTimeLeft(targetDate: string) {
 }
 
 const numberClass =
-  "text-3xl font-normal tracking-wide text-[#4d1f29] drop-shadow-[0_0_10px_rgba(251,245,230,0.9)] sm:text-4xl";
+  "text-xl font-normal tracking-wide text-[#fff8ef] drop-shadow-[0_2px_6px_rgba(0,0,0,0.55)] sm:text-4xl";
 
 const labelClass =
-  "mt-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#3f4a2c] drop-shadow-[0_0_8px_rgba(251,245,230,0.9)]";
+  "mt-1 text-[0.5rem] font-semibold uppercase tracking-[0.15em] text-[#e8cf9a] drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] sm:mt-2 sm:text-xs sm:tracking-[0.25em]";
 
 export function SaveTheDate() {
   const [timeLeft, setTimeLeft] = useState(() =>
@@ -75,7 +76,7 @@ export function SaveTheDate() {
 
   return (
     <section
-      className="relative overflow-hidden bg-transparent px-6 py-20"
+      className="relative overflow-hidden bg-transparent px-0 py-6 sm:px-6 sm:py-20"
       style={{
         background: "transparent",
         backgroundColor: "transparent",
@@ -85,48 +86,61 @@ export function SaveTheDate() {
         boxShadow: "none",
       }}
     >
-      <div className="relative mx-auto max-w-md text-center">
-        <CornerFrame />
+      {/* Background image wrapper: fixed shape so the whole design stays visible */}
+      <div className="relative mx-auto flex aspect-[16/10] w-full items-center justify-center overflow-hidden sm:aspect-[16/9] sm:max-w-3xl">
+        <img
+          src={countdownBg}
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-fill sm:object-cover"
+        />
 
-        <Reveal>
-          <SectionHeading
-            title="The Celebration Begins"
-            script
-          />
-        </Reveal>
+        <div className="relative z-10 mx-auto w-full max-w-md px-8 py-6 text-center sm:px-16 sm:py-12">
+          <CornerFrame />
 
-        <Reveal delay={0.1}>
-          <div className="mt-10">
-            <div className="mt-8 grid grid-cols-4 gap-4">
-              <div>
-                <p className={numberClass}>{timeLeft.days}</p>
-                <p className={labelClass}>Days</p>
-              </div>
+          {/* Heading is scaled down on mobile only */}
+          <div className="[zoom:0.6] sm:[zoom:1]">
+            <Reveal>
+              <SectionHeading
+                title="The Celebration Begins"
+                script
+              />
+            </Reveal>
+          </div>
 
-              <div>
-                <p className={numberClass}>{timeLeft.hours}</p>
-                <p className={labelClass}>Hours</p>
-              </div>
+          <Reveal delay={0.1}>
+            <div className="mt-3 sm:mt-10">
+              <div className="grid grid-cols-4 gap-2 sm:mt-8 sm:gap-4">
+                <div>
+                  <p className={numberClass}>{timeLeft.days}</p>
+                  <p className={labelClass}>Days</p>
+                </div>
 
-              <div>
-                <p className={numberClass}>{timeLeft.minutes}</p>
-                <p className={labelClass}>Minutes</p>
-              </div>
+                <div>
+                  <p className={numberClass}>{timeLeft.hours}</p>
+                  <p className={labelClass}>Hours</p>
+                </div>
 
-              <div>
-                <p className={numberClass}>{timeLeft.seconds}</p>
-                <p className={labelClass}>Seconds</p>
+                <div>
+                  <p className={numberClass}>{timeLeft.minutes}</p>
+                  <p className={labelClass}>Minutes</p>
+                </div>
+
+                <div>
+                  <p className={numberClass}>{timeLeft.seconds}</p>
+                  <p className={labelClass}>Seconds</p>
+                </div>
               </div>
             </div>
-          </div>
-        </Reveal>
+          </Reveal>
 
-        <Reveal delay={0.2}>
-          {/* Time line - antique gold */}
-          <p className="mt-8 text-center text-sm font-medium italic text-[#7a5a14] drop-shadow-[0_0_8px_rgba(251,245,230,0.9)]">
-            {wedding.time}
-          </p>
-        </Reveal>
+          <Reveal delay={0.2}>
+            {/* Time line - light gold */}
+            <p className="mt-3 text-center text-[0.65rem] font-medium italic text-[#e8cf9a] drop-shadow-[0_1px_4px_rgba(0,0,0,0.55)] sm:mt-8 sm:text-sm">
+              {wedding.time}
+            </p>
+          </Reveal>
+        </div>
       </div>
     </section>
   );

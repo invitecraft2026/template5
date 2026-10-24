@@ -1,4 +1,4 @@
-import venueImg from "@/assets/venue.jpg";
+import venueImg from "@/assets/venue-illustration.png";
 import { wedding } from "@/config/wedding";
 import { mapsDirectionsUrl } from "@/utils/calendar";
 
@@ -28,26 +28,15 @@ export function VenueSection() {
         </Reveal>
 
         <Reveal delay={0.1}>
-          {/* Photo frame - ivory card with gold border */}
-          <div
-            className="
-              mt-10
-              overflow-hidden
-              rounded-xl
-              border
-              border-[#b8934a]/70
-              bg-[#fbf5e6]/80
-              p-2
-              shadow-[0_10px_30px_rgba(77,31,41,0.18)]
-            "
-          >
+          {/* Watercolor illustration - no frame, blends into the page */}
+          <div className="mt-8 flex justify-center">
             <img
               src={venueImg}
-              alt="Wedding venue"
+              alt="Watercolor illustration of the wedding venue"
               loading="lazy"
-              width={1024}
-              height={768}
-              className="h-52 w-full rounded-lg object-cover sm:h-60"
+              width={1200}
+              height={1044}
+              className="h-auto w-full max-w-[26rem] drop-shadow-[0_12px_24px_rgba(77,31,41,0.18)] sm:max-w-none"
             />
           </div>
         </Reveal>

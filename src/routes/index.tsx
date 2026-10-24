@@ -14,6 +14,7 @@ import { SaveTheDate } from "@/components/SaveTheDate";
 import { ScratchReveal } from "@/components/ScratchReveal";
 import { VenueSection } from "@/components/VenueSection";
 import { wedding } from "@/config/wedding";
+// import { Countdown } from "@/components/Countdown";
 
 const title = `${wedding.bride.firstName} & ${wedding.groom.firstName} — Wedding Invitation`;
 
@@ -116,6 +117,7 @@ function Index() {
           <EventTimeline />
 
           <SaveTheDate />
+          {/* <Countdown/> */}
 
           <VenueSection />
 
